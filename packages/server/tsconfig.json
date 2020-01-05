@@ -1,0 +1,10 @@
+{
+  "extends": "../../config/tsconfig.json",
+  "compilerOptions": {
+     "lib": [
+        "es5",
+        "es6"
+     ],
+     "experimentalDecorators": true
+  }
+}

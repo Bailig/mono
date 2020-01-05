@@ -1,0 +1,14 @@
+{
+  "name": "@mono/root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build",
+    "lint": "eslint --config './config/.eslintrc.js' './packages/**/*.ts{,x}' --fix"
+  },
+  "devDependencies": {
+    "lerna": "^3.20.0"
+  }
+}
