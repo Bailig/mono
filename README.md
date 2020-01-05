@@ -1,0 +1,2 @@
+# mono
+Experimenting with monorepo
