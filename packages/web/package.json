@@ -4,7 +4,8 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "temp": "node ../../config/paths.js"
   },
   "devDependencies": {
     "@types/react": "^16.9.17",

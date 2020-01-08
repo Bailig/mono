@@ -34,6 +34,6 @@ module.exports = {
     }
   },
   "rules": {
-    "import/extensions": "off"
+    "import/extensions": "off",
   }
 };

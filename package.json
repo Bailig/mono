@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
+    "temp": "lerna run temp",
     "lint": "eslint --config './config/.eslintrc.js' './packages/**/*.ts{,x}' --fix"
   },
   "devDependencies": {
