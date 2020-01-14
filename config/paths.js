@@ -1,5 +1,8 @@
 const path = require('path');
 const fs = require('fs');
+const environmentConfig = require('./env');
+
+const servedUrl = `${environmentConfig.protocol}/${environmentConfig.host}:${environmentConfig.serverPort}`;
 
 const resolvePackage = (relativePath) => path.resolve(process.cwd(), relativePath);
 const resolveRoot = (relativePath) => path.resolve(__dirname, `../${relativePath}`);
@@ -34,7 +37,9 @@ const paths = {
     indexJs: addFileExtension(resolvePackage('src/index')),
     packageJson: resolvePackage('package.json'),
     src: resolvePackage('src'),
+    servedUrl,
   },
 };
 
 module.exports = paths;
+module.exports.moduleFileExtensions = moduleFileExtensions;

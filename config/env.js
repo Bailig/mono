@@ -3,17 +3,16 @@ const environmentConfigs = {
   development: {
     id: 'development',
     serverPort: 5000,
-    webPort: 3000,
     database: 'mono-db-development',
     host: '0.0.0.0',
-    protocol: 'https',
+    protocol: 'http',
   },
   testing: {
     id: 'testing',
     serverPort: 5000,
     database: 'mono-db-testing',
     host: '0.0.0.0',
-    protocol: 'https',
+    protocol: 'http',
   },
   staging: {
     id: 'staging',
@@ -33,7 +32,7 @@ const environmentConfigs = {
 
 const environments = Object.keys(environmentConfigs);
 
-const getEnvironmentConfigs = () => {
+const getEnvironmentConfig = () => {
   if (environments.indexOf(process.env.NODE_ENV) === -1) {
     throw new Error(
       `The NODE_ENV environment variable is required to be one of ${environments.join(', ')} but got ${process.env.NODE_ENV}.`,
@@ -42,4 +41,4 @@ const getEnvironmentConfigs = () => {
   return environmentConfigs[process.env.NODE_ENV];
 };
 
-module.exports = getEnvironmentConfigs();
+module.exports = getEnvironmentConfig();
