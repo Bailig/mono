@@ -16,7 +16,7 @@ const moduleFileExtensions = [
 const addFileExtension = (path) => { // eslint-disable-line no-shadow
   const extension = moduleFileExtensions.find((e) => fs.existsSync(`${path}.${e}`));
   if (!extension) {
-    throw Error(`Failed to add file extension to: ${path}. The file should exist and the extension should be one of ${moduleFileExtensions.join(', ')}`);
+    throw new Error(`Failed to add file extension to: ${path}. The file should exist and the extension should be one of ${moduleFileExtensions.join(', ')}`);
   }
 
   return `${path}.${extension}`;
