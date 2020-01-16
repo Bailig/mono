@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 
 const environmentConfigs = {
   development: {
@@ -38,7 +39,30 @@ const getEnvironmentConfig = () => {
       `The NODE_ENV environment variable is required to be one of ${environments.join(', ')} but got ${process.env.NODE_ENV}.`,
     );
   }
-  return environmentConfigs[process.env.NODE_ENV];
+
+  const rawVariables = Object.keys(process.env)
+    .reduce(
+      (env, key) => {
+        env[key] = process.env[key];
+        return env;
+      },
+      {
+        NODE_ENV: process.env.NODE_ENV || 'development',
+      },
+    );
+
+  const stringifiedVariables = {
+    'process.env': Object.keys(rawVariables).reduce((env, key) => {
+      env[key] = JSON.stringify(rawVariables[key]);
+      return env;
+    }),
+  };
+
+  return {
+    configs: environmentConfigs[process.env.NODE_ENV],
+    rawVariables,
+    stringifiedVariables,
+  };
 };
 
 module.exports = getEnvironmentConfig();

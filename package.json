@@ -10,7 +10,8 @@
     "lint": "eslint --config './config/.eslintrc.js' './packages/**/*.ts{,x}' --fix"
   },
   "devDependencies": {
-    "lerna": "^3.20.0"
+    "lerna": "^3.20.0",
+    "html-webpack-plugin": "^3.2.0"
   },
   "dependencies": {
     "fs-extra": "^8.1.0",
