@@ -34,7 +34,7 @@ const environmentConfigs = {
 const environments = Object.keys(environmentConfigs);
 
 const getEnvironmentConfig = () => {
-  if (environments.indexOf(process.env.NODE_ENV) === -1) {
+  if (!environments.includes(process.env.NODE_ENV)) {
     throw new Error(
       `The NODE_ENV environment variable is required to be one of ${environments.join(', ')} but got ${process.env.NODE_ENV}.`,
     );

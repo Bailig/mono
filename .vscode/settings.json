@@ -1,12 +1,6 @@
 {
-  "eslint.workingDirectories": ["packages/*"],
   "eslint.options": {
-    "configFile": "./config/.eslintrc.js"
+    "configFile": "./config/.eslintrc.js",
+    "ignorePath": ".gitignore"
   }
-  // "eslint.validate": [
-  //   "javascript", 
-  //   "javascriptreact",
-  //   "typescript",
-  //   "typescriptreact"
-  // ]
 }

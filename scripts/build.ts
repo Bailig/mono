@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
-const fs = require('fs-extra');
-const webpack = require('webpack');
-const configFactory = require('../config/webpack.config');
-const paths = require('../config/paths');
+import fs from 'fs-extra';
+import webpack from 'webpack';
+import { getWebpackConfig } from '../config/webpack.config';
+import paths from '../config/paths';
 
 
 const copyPublicFolder = () => {
@@ -16,7 +16,7 @@ const copyPublicFolder = () => {
 const build = () => {
   console.log('Creating an optimized production build...');
 
-  const config = configFactory('production');
+  const config = getWebpackConfig('production');
   const compiler = webpack(config);
   compiler.run((err) => {
     if (err) {

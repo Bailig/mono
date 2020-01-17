@@ -1,19 +1,24 @@
 /* eslint-disable import/no-dynamic-require */
 
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import { relative } from 'path';
+import { DefinePlugin, IgnorePlugin } from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ManifestPlugin from 'webpack-manifest-plugin';
 
-const paths = require('./paths');
-const env = require('./env');
+import { stringifiedVariables } from './env';
+import { paths, moduleFileExtensions } from './paths';
 
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const packagePackageJson = require(paths.package.packageJson);
 
 const ENV_DEVELOPMENT = 'development';
 const ENV_PRODUCTION = 'production';
 
-// type WebpackEnv = "development" | "production"
-module.exports = (webpackEnv) => {
+type WebpackEnv = "development" | "production"
+type GetWebpackConfig = (webpackEnv: WebpackEnv) => Record<string, any>
+
+export const getWebpackConfig: GetWebpackConfig = (webpackEnv) => {
   const isEnvDevelopment = webpackEnv === ENV_DEVELOPMENT;
   const isEnvProduction = webpackEnv === ENV_PRODUCTION;
 
@@ -44,8 +49,8 @@ module.exports = (webpackEnv) => {
       },
     },
     resolve: {
-      modules: [paths.root.nodeModules],
-      extensions: paths.moduleFileExtensions
+      modules: [root.nodeModules],
+      extensions: moduleFileExtensions
         .map((ext) => `.${ext}`),
     },
     module: {
@@ -68,7 +73,7 @@ module.exports = (webpackEnv) => {
               loader: require.resolve('eslint-loader'),
             },
           ],
-          include: paths.package.src,
+          include: package.src,
         },
         {
           // "oneOf" will traverse all following loaders until one will
@@ -90,7 +95,7 @@ module.exports = (webpackEnv) => {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              include: paths.package.src,
+              include: package.src,
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(
@@ -172,7 +177,7 @@ module.exports = (webpackEnv) => {
       new HtmlWebpackPlugin(
         {
           inject: true,
-          template: paths.package.indexHtml,
+          template: package.indexHtml,
         },
       ),
       // Makes some environment variables available to the JS code, for example:
@@ -180,38 +185,13 @@ module.exports = (webpackEnv) => {
       // It is absolutely essential that NODE_ENV is set to production
       // during a production build.
       // Otherwise React will be compiled in the very slow development mode.
-      new webpack.DefinePlugin(env.stringifiedVariables),
-      // Generate an asset manifest file with the following content:
-      // - "files" key: Mapping of all asset filenames to their corresponding
-      //   output file so that tools can pick it up without having to parse
-      //   `index.html`
-      // - "entrypoints" key: Array of files which are included in `index.html`,
-      //   can be used to reconstruct the HTML if necessary
-      // TODO
-      new ManifestPlugin({
-        fileName: 'asset-manifest.json',
-        publicPath,
-        generate: (seed, files, entrypoints) => {
-          const manifestFiles = files.reduce((manifest, file) => {
-            manifest[file.name] = file.path;
-            return manifest;
-          }, seed);
-          const entrypointFiles = entrypoints.main.filter(
-            (fileName) => !fileName.endsWith('.map'),
-          );
-
-          return {
-            files: manifestFiles,
-            entrypoints: entrypointFiles,
-          };
-        },
-      }),
+      new DefinePlugin(stringifiedVariables),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
       // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
       // You can remove this if you don't use Moment.js:
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new IgnorePlugin(/^\.\/locale$/, /moment$/),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
       isEnvProduction
@@ -234,7 +214,7 @@ module.exports = (webpackEnv) => {
       useTypeScript
         && new ForkTsCheckerWebpackPlugin({
           typescript: resolve.sync('typescript', {
-            basedir: paths.appNodeModules,
+            basedir: appNodeModules,
           }),
           async: isEnvDevelopment,
           useTypescriptIncrementalApi: true,
@@ -245,7 +225,7 @@ module.exports = (webpackEnv) => {
           resolveTypeReferenceDirectiveModule: process.versions.pnp
             ? `${__dirname}/pnpTs.js`
             : undefined,
-          tsconfig: paths.appTsConfig,
+          tsconfig: appTsConfig,
           reportFiles: [
             '**',
             '!**/__tests__/**',
@@ -265,10 +245,10 @@ module.exports = (webpackEnv) => {
     // Stop compilation early in production
     bail: true,
     devtool: 'source-map',
-    entry: paths.package.indexJs,
+    entry: package.indexJs,
     output: {
       // The build folder.
-      path: paths.package.build,
+      path: package.build,
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: false,
       // There will be one main bundle, and one file per asynchronous chunk.
@@ -277,10 +257,9 @@ module.exports = (webpackEnv) => {
       // There are also additional JS chunk files if you use code splitting.
       chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      publicPath: paths.package.servedUrl,
+      publicPath: package.servedUrl,
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: (info) => path
-        .relative(paths.package.src, info.absoluteResourcePath)
+      devtoolModuleFilenameTemplate: (info) => relative(package.src, info.absoluteResourcePath)
         .replace(/\\/g, '/'),
     },
     optimization: {

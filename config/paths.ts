@@ -1,6 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const environmentConfig = require('./env');
+import path from 'path';
+import fs from 'fs';
+import environmentConfig from './env';
 
 const servedUrl = `${environmentConfig.protocol}/${environmentConfig.host}:${environmentConfig.serverPort}`;
 
@@ -8,7 +8,7 @@ const resolvePackage = (relativePath) => path.resolve(process.cwd(), relativePat
 const resolveRoot = (relativePath) => path.resolve(__dirname, `../${relativePath}`);
 
 
-const moduleFileExtensions = [
+export const moduleFileExtensions = [
   'ts',
   'tsx',
 ];
@@ -22,7 +22,7 @@ const addFileExtension = (path) => { // eslint-disable-line no-shadow
   return `${path}.${extension}`;
 };
 
-const paths = {
+export const paths = {
   root: {
     path: resolveRoot('.'),
     env: resolveRoot('config/.env'),
@@ -40,6 +40,3 @@ const paths = {
     servedUrl,
   },
 };
-
-module.exports = paths;
-module.exports.moduleFileExtensions = moduleFileExtensions;
