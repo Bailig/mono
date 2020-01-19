@@ -1,6 +1,15 @@
 {
   "eslint.options": {
-    "configFile": "./config/.eslintrc.js",
+    "configFile": "config/.eslintrc.js",
     "ignorePath": ".gitignore"
-  }
+  },
+  "eslint.packageManager": "yarn",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "prettier.configPath": "config/.prettierrc.js",
+  "prettier.ignorePath": ".gitignore",
+  "prettier.packageManager": "yarn"
 }

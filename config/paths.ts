@@ -1,42 +1,48 @@
-import path from 'path';
-import fs from 'fs';
-import environmentConfig from './env';
+import fs from "fs";
+import path from "path";
+import { getEnvConfig } from "./env";
 
-const servedUrl = `${environmentConfig.protocol}/${environmentConfig.host}:${environmentConfig.serverPort}`;
+const envConfig = getEnvConfig();
+const servedUrl = `${envConfig.protocol}/${envConfig.host}:${envConfig.serverPort}/`;
 
-const resolvePackage = (relativePath) => path.resolve(process.cwd(), relativePath);
-const resolveRoot = (relativePath) => path.resolve(__dirname, `../${relativePath}`);
+const resolvePackage = (relativePath): string =>
+  path.resolve(process.cwd(), relativePath);
+const resolveRoot = (relativePath): string =>
+  path.resolve(__dirname, `../${relativePath}`);
 
+export const moduleFileExtensions = ["ts", "tsx", "js", "jsx"];
 
-export const moduleFileExtensions = [
-  'ts',
-  'tsx',
-];
-
-const addFileExtension = (path) => { // eslint-disable-line no-shadow
-  const extension = moduleFileExtensions.find((e) => fs.existsSync(`${path}.${e}`));
+const addFileExtension = (filePath: string): string => {
+  // eslint-disable-line no-shadow
+  const extension = moduleFileExtensions.find(e =>
+    fs.existsSync(`${filePath}.${e}`),
+  );
   if (!extension) {
-    throw new Error(`Failed to add file extension to: ${path}. The file should exist and the extension should be one of ${moduleFileExtensions.join(', ')}`);
+    throw new Error(
+      `Failed to add file extension to: ${filePath}. The file should exist and the extension should be one of ${moduleFileExtensions.join(
+        ", ",
+      )}`,
+    );
   }
 
-  return `${path}.${extension}`;
+  return `${filePath}.${extension}`;
 };
 
 export const paths = {
   root: {
-    path: resolveRoot('.'),
-    env: resolveRoot('config/.env'),
-    tsConfig: resolveRoot('config/tsconfig.json'),
-    nodeModules: resolveRoot('node_modules'),
+    path: resolveRoot("."),
+    env: resolveRoot("config/.env"),
+    tsConfig: resolveRoot("config/tsconfig.json"),
+    nodeModules: resolveRoot("node_modules"),
   },
   package: {
-    path: resolvePackage('.'),
-    build: resolvePackage('build'),
-    public: resolvePackage('public'),
-    indexHtml: resolvePackage('public/index.html'),
-    indexJs: addFileExtension(resolvePackage('src/index')),
-    packageJson: resolvePackage('package.json'),
-    src: resolvePackage('src'),
+    path: resolvePackage("."),
+    build: resolvePackage("build"),
+    public: resolvePackage("public"),
+    indexHtml: resolvePackage("public/index.html"),
+    indexJs: addFileExtension(resolvePackage("src/index")),
+    packageJson: resolvePackage("package.json"),
+    src: resolvePackage("src"),
     servedUrl,
   },
 };

@@ -48,7 +48,11 @@ module.exports = {
     ],
     // Common abbreviations are known and readable
     "unicorn/prevent-abbreviations": "off",
+    // Unnecessary in typescript
+    "react/prop-types": "off",
+    // Too restrictive
     "eslint-comments/disable-enable-pair": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
+    // Conflicts with ramda placeholder,
+    "no-underscore-dangle": "off",
   },
 };
