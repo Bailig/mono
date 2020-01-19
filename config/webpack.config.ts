@@ -15,7 +15,7 @@ import ModuleScopePlugin from "react-dev-utils/ModuleScopePlugin";
 import WatchMissingNodeModulesPlugin from "react-dev-utils/WatchMissingNodeModulesPlugin";
 // import resolve from 'resolve';
 import TerserPlugin from "terser-webpack-plugin";
-import webpack from "webpack";
+import webpack, { Configuration, RuleSetQuery, RuleSetUse } from "webpack";
 import ManifestPlugin from "webpack-manifest-plugin";
 import { moduleFileExtensions, paths } from "./paths";
 
@@ -30,12 +30,7 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
-// This is the production and development configuration.
-// It is focused on developer experience, fast rebuilds, and a minimal bundle.
-type WebpackEnv = "development" | "production";
-export const getWebpackConfig = (
-  webpackEnv: WebpackEnv,
-): Record<string, any> => {
+export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
 
@@ -60,11 +55,8 @@ export const getWebpackConfig = (
   const publicUrl = isEnvProduction
     ? publicPath.slice(0, -1)
     : isEnvDevelopment && "";
-  // Get environment variables to inject into our app.
-  const env = getClientEnvironment(publicUrl);
 
-  // common function to get style loaders
-  const getStyleLoaders = (cssOptions, preProcessor) => {
+  const getStyleLoaders: GetStyleLoaders = (cssOptions, preProcessor) => {
     const loaders = [
       isEnvDevelopment && require.resolve("style-loader"),
       isEnvProduction && {
@@ -460,3 +452,14 @@ export const getWebpackConfig = (
     performance: false,
   };
 };
+
+//  types
+
+type GetWebpackConfig = (
+  webpackEnv: "development" | "production",
+) => Configuration;
+
+type GetStyleLoaders = (
+  cssOptions: RuleSetQuery,
+  preProcessor: string,
+) => RuleSetUse;
