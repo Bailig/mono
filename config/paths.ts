@@ -1,9 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { getEnvConfig } from "./env";
-
-const envConfig = getEnvConfig();
-const servedUrl = `${envConfig.protocol}/${envConfig.host}:${envConfig.serverPort}/`;
 
 const resolvePackage = (relativePath): string =>
   path.resolve(process.cwd(), relativePath);
@@ -43,6 +39,5 @@ export const paths = {
     indexJs: addFileExtension(resolvePackage("src/index")),
     packageJson: resolvePackage("package.json"),
     src: resolvePackage("src"),
-    servedUrl,
   },
 };

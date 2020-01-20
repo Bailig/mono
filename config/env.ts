@@ -54,3 +54,4 @@ const getEnvConfig = (): EnvConfig => {
 };
 
 export const envConfig = getEnvConfig();
+export const servedUrl = `${envConfig.protocol}/${envConfig.host}:${envConfig.serverPort}/`;
