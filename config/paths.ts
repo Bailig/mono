@@ -1,9 +1,10 @@
 import fs from "fs";
 import path from "path";
 
-const resolvePackage = (relativePath): string =>
+const resolvePackage: ResolveRelativePath = relativePath =>
   path.resolve(process.cwd(), relativePath);
-const resolveRoot = (relativePath): string =>
+
+const resolveRoot: ResolveRelativePath = relativePath =>
   path.resolve(__dirname, `../${relativePath}`);
 
 export const moduleFileExtensions = ["ts", "tsx", "js", "jsx"];
@@ -41,3 +42,5 @@ export const paths = {
     src: resolvePackage("src"),
   },
 };
+
+type ResolveRelativePath = (relativePath: string) => string;

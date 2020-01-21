@@ -1,31 +1,33 @@
 import CaseSensitivePathsPlugin from "case-sensitive-paths-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import OptimizeCSSAssetsPlugin from "optimize-css-assets-webpack-plugin";
 import path from "path";
-import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
-// import PnpWebpackPlugin from 'pnp-webpack-plugin';
-import postcssNormalize from "postcss-normalize";
-import postcssPresetEnv from "postcss-preset-env";
-import safePostCssParser from "postcss-safe-parser";
 import R from "ramda";
-import ForkTsCheckerWebpackPlugin from "react-dev-utils/ForkTsCheckerWebpackPlugin";
 import getCSSModuleLocalIdent from "react-dev-utils/getCSSModuleLocalIdent";
 import InlineChunkHtmlPlugin from "react-dev-utils/InlineChunkHtmlPlugin";
-import ModuleNotFoundPlugin from "react-dev-utils/ModuleNotFoundPlugin";
 import ModuleScopePlugin from "react-dev-utils/ModuleScopePlugin";
-import typescriptFormatter from "react-dev-utils/typescriptFormatter";
 import WatchMissingNodeModulesPlugin from "react-dev-utils/WatchMissingNodeModulesPlugin";
 import resolve from "resolve";
 import TerserPlugin from "terser-webpack-plugin";
-import webpack, { Configuration, RuleSetQuery, RuleSetUse } from "webpack";
+import webpack, { RuleSetQuery, RuleSetUse } from "webpack";
 import ManifestPlugin, { FileDescriptor } from "webpack-manifest-plugin";
 import WorkboxWebpackPlugin from "workbox-webpack-plugin";
 import { servedUrl } from "./env";
 import { moduleFileExtensions, paths } from "./paths";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-dynamic-require
-const appPackageJson = require(paths.package.packageJson);
+/* eslint-disable @typescript-eslint/no-var-requires */
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const postcssPresetEnv = require("postcss-preset-env");
+const safePostCssParser = require("postcss-safe-parser");
+const postcssNormalize = require("postcss-normalize");
+const postcssFlexbugsFixes = require("postcss-flexbugs-fixes");
+const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin");
+const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin");
+const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
+/* eslint-enable @typescript-eslint/no-var-requires */
+
+// eslint-disable-next-line import/no-dynamic-require
+const packageName = require(paths.package.packageJson).name;
 
 const cssModuleRegex = /\.module\.css$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
@@ -69,6 +71,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
         },
       },
     ].filter(Boolean);
+
     if (preProcessor) {
       loaders.push(
         {
@@ -115,7 +118,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
               .relative(paths.package.src, info.absoluteResourcePath)
               .replace(/\\/g, "/")
         : info => path.resolve(info.absoluteResourcePath).replace(/\\/g, "/"),
-      jsonpFunction: `webpackJsonp${appPackageJson.name}`,
+      jsonpFunction: `webpackJsonp${packageName}`,
       globalObject: "this",
     },
     optimization: {
@@ -416,7 +419,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
 //  ---------- types ----------
 type GetWebpackConfig = (
   webpackEnv: "development" | "production",
-) => Configuration;
+) => webpack.Configuration;
 
 type GetStyleLoaders = (
   cssOptions: RuleSetQuery,
