@@ -5,11 +5,12 @@
   },
   "eslint.packageManager": "yarn",
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": false
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "prettier.configPath": "config/.prettierrc.js",
   "prettier.ignorePath": ".gitignore",
-  "prettier.packageManager": "yarn"
+  "prettier.packageManager": "yarn",
+  "liveServer.settings.port": 5501
 }

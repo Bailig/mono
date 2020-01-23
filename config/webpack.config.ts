@@ -12,7 +12,7 @@ import TerserPlugin from "terser-webpack-plugin";
 import webpack, { RuleSetQuery, RuleSetUse } from "webpack";
 import ManifestPlugin, { FileDescriptor } from "webpack-manifest-plugin";
 import WorkboxWebpackPlugin from "workbox-webpack-plugin";
-import { servedUrl } from "./env";
+import { rawEnv } from "./env";
 import { moduleFileExtensions, paths } from "./paths";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -39,16 +39,13 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
   const isEnvProductionProfile =
     isEnvProduction && process.argv.includes("--profile");
 
-  const publicPath = isEnvProduction ? servedUrl : "/";
-
-  const publicUrl = isEnvProduction ? publicPath.slice(0, -1) : "";
-
   const getStyleLoaders: GetStyleLoaders = (cssOptions, preProcessor) => {
     const loaders = [
-      isEnvDevelopment && require.resolve("style-loader"),
-      isEnvProduction && {
-        loader: MiniCssExtractPlugin.loader,
-      },
+      isEnvDevelopment
+        ? require.resolve("style-loader")
+        : {
+            loader: MiniCssExtractPlugin.loader,
+          },
       {
         loader: require.resolve("css-loader"),
         options: cssOptions,
@@ -72,46 +69,46 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
       },
     ].filter(Boolean);
 
-    if (preProcessor) {
-      loaders.push(
-        {
-          loader: require.resolve("resolve-url-loader"),
-          options: {
-            sourceMap: isEnvProduction,
-          },
+    if (!preProcessor) return loaders;
+
+    return [
+      ...loaders,
+      {
+        loader: require.resolve("resolve-url-loader"),
+        options: {
+          sourceMap: isEnvProduction,
         },
-        {
-          loader: require.resolve(preProcessor),
-          options: {
-            sourceMap: true,
-          },
+      },
+      {
+        loader: require.resolve(preProcessor),
+        options: {
+          sourceMap: true,
         },
-      );
-    }
-    return loaders;
+      },
+    ];
   };
 
   return {
     mode: isEnvProduction ? "production" : "development",
     bail: isEnvProduction,
+    stats: "normal", // TODO; not working
     devtool: isEnvProduction ? "source-map" : "cheap-module-source-map",
     entry: [
       isEnvDevelopment &&
         require.resolve("react-dev-utils/webpackHotDevClient"),
       paths.package.indexJs,
-    ].filter(Boolean),
+    ].filter(Boolean) as string[],
     output: {
       path: isEnvProduction ? paths.package.build : undefined,
       pathinfo: isEnvDevelopment,
       filename: isEnvProduction
         ? "static/js/[name].[contenthash:8].js"
         : "static/js/bundle.js",
-      // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
       chunkFilename: isEnvProduction
         ? "static/js/[name].[contenthash:8].chunk.js"
         : "static/js/[name].chunk.js",
-      publicPath: isEnvProduction ? servedUrl : "/",
+      publicPath: "/",
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info =>
             path
@@ -167,13 +164,15 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
       },
     },
     resolve: {
-      modules: ["node_modules", paths.root.nodeModules],
+      modules: ["../node_modules", paths.root.nodeModules],
       extensions: moduleFileExtensions.map(ext => `.${ext}`),
       alias: {
-        ...(isEnvProductionProfile && {
-          "react-dom$": "react-dom/profiling",
-          "scheduler/tracing": "scheduler/tracing-profiling",
-        }),
+        ...(isEnvProductionProfile
+          ? {
+              "react-dom$": "react-dom/profiling",
+              "scheduler/tracing": "scheduler/tracing-profiling",
+            }
+          : {}),
       },
       plugins: [
         new ModuleScopePlugin(paths.package.src, [paths.package.packageJson]),
@@ -337,7 +336,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
       isEnvProduction &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+\.js/]),
       new ModuleNotFoundPlugin(paths.package.path),
-      new webpack.DefinePlugin({ "process.env": process.env }),
+      new webpack.DefinePlugin(rawEnv),
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
       isEnvDevelopment && new CaseSensitivePathsPlugin(),
       isEnvDevelopment &&
@@ -349,13 +348,18 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
         }),
       new ManifestPlugin({
         fileName: "asset-manifest.json",
+        publicPath: "/",
         generate: (seed, files, entrypoints) => {
           const manifestFiles = R.pipe<
             FileDescriptor[],
-            Record<string, FileDescriptor>,
+            FileDescriptor[],
+            { name: string; path: string }[],
+            Record<string, { name: string; path: string }>,
             Record<string, string>,
             Record<string, string>
           >(
+            R.filter(file => typeof file.name === "string"),
+            R.map(file => ({ ...file, name: file.name as string })),
             R.indexBy(R.prop("name")),
             R.mapObjIndexed(R.prop("path")),
             R.merge(seed),
@@ -377,7 +381,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
           clientsClaim: true,
           exclude: [/\.map$/, /asset-manifest\.json$/],
           importWorkboxFrom: "cdn",
-          navigateFallback: `${publicUrl}/index.html`,
+          navigateFallback: "/index.html",
           navigateFallbackBlacklist: [
             new RegExp("^/_"),
             new RegExp("/[^/?]+\\.[^/]+$"),
@@ -391,14 +395,8 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
         useTypescriptIncrementalApi: true,
         checkSyntacticErrors: true,
         tsconfig: paths.root.tsConfig,
-        reportFiles: [
-          "**",
-          "!**/__tests__/**",
-          "!**/?(*.)(spec|test).*",
-          "!**/src/setupProxy.*",
-          "!**/src/setupTests.*",
-        ],
-        silent: true,
+        reportFiles: ["**", "!**/__tests__/**", "!**/?(*.)(spec|test).*"],
+        silent: false,
         formatter: isEnvProduction ? typescriptFormatter : undefined,
       }),
     ].filter(Boolean),

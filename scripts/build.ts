@@ -1,9 +1,16 @@
 /* eslint-disable no-console */
-
+import R from "ramda";
 import fs from "fs-extra";
 import webpack from "webpack";
+import formatWebpackMessages from "react-dev-utils/formatWebpackMessages";
+
+// required to set NODE_ENV before importing config files
+process.env.NODE_ENV = "production";
+
+/* eslint-disable import/first */
 import { paths } from "../config/paths";
 import { getWebpackConfig } from "../config/webpack.config";
+/* eslint-enable import/first */
 
 const copyPublicFolder = (): void => {
   fs.copySync(paths.package.public, paths.package.build, {
@@ -16,10 +23,30 @@ const build = (): void => {
   console.log("Creating an optimized production build...");
 
   const config = getWebpackConfig("production");
+
   const compiler = webpack(config);
-  compiler.run(err => {
-    if (err) throw err;
-    console.log("Created the optimized production build.");
+  compiler.run((error, stats) => {
+    if (error) throw error;
+
+    const formatedStats = formatWebpackMessages(
+      stats.toJson({ all: false, warnings: true, errors: true }),
+    );
+
+    const errorMessage = R.pipe<FormatedStats, string[], string>(
+      R.prop("errors"),
+      R.head,
+    )(formatedStats);
+
+    if (errorMessage) throw new Error(errorMessage);
+
+    const warningMessage = R.pipe<FormatedStats, string[], string>(
+      R.prop("warnings"),
+      R.join("/n/n"),
+    )(formatedStats);
+
+    if (warningMessage) console.warn(warningMessage);
+
+    console.log("Done!");
   });
 };
 
@@ -32,3 +59,9 @@ copyPublicFolder();
 
 // Start the webpack build
 build();
+
+// ---------- types ----------
+type FormatedStats = {
+  errors: string[];
+  warnings: string[];
+};

@@ -4,7 +4,7 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "ts-node ../../scripts/build"
+    "build": "ts-node --project '../../config/tsconfig.json' ../../scripts/build"
   },
   "devDependencies": {
     "@types/react": "^16.9.17",
@@ -39,6 +39,7 @@
     "webpack-manifest-plugin": "^2.2.0"
   },
   "dependencies": {
+    "ramda": "^0.26.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   }

@@ -10,7 +10,6 @@ const resolveRoot: ResolveRelativePath = relativePath =>
 export const moduleFileExtensions = ["ts", "tsx", "js", "jsx"];
 
 const addFileExtension = (filePath: string): string => {
-  // eslint-disable-line no-shadow
   const extension = moduleFileExtensions.find(e =>
     fs.existsSync(`${filePath}.${e}`),
   );
