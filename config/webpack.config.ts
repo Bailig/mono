@@ -91,7 +91,6 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
   return {
     mode: isEnvProduction ? "production" : "development",
     bail: isEnvProduction,
-    stats: "normal", // TODO; not working
     devtool: isEnvProduction ? "source-map" : "cheap-module-source-map",
     entry: [
       isEnvDevelopment &&
@@ -213,9 +212,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
               include: paths.package.src,
               loader: require.resolve("babel-loader"),
               options: {
-                customize: require.resolve(
-                  "babel-preset-react-app/webpack-overrides",
-                ),
+                presets: [["react-app", { flow: false, typescript: true }]],
                 plugins: [
                   [
                     require.resolve("babel-plugin-named-asset-import"),

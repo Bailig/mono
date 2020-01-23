@@ -41,7 +41,7 @@ const build = (): void => {
 
     const warningMessage = R.pipe<FormatedStats, string[], string>(
       R.prop("warnings"),
-      R.join("/n/n"),
+      R.join("\n\n"),
     )(formatedStats);
 
     if (warningMessage) console.warn(warningMessage);
