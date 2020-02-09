@@ -1,0 +1,59 @@
+version: "3.7"
+
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: web
+    image: bailig/mono-web
+    container_name: mono_web
+    ports:
+      - target: 80
+        published: 80
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: server
+    image: bailig/mono-server
+    container_name: mono_server
+    ports:
+      - target: 8001
+        published: 8001
+    environment:
+      NODE_ENV: "production"
+      DATABASE_URL: "postgresql://root:password@database:5432/mono-production"
+      CACHE_URL: "redis://:password@cache:6379/0"
+    depends_on:
+      - database
+      - cache
+
+  database:
+    image: postgres:alpine
+    container_name: mono_database
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: root
+      POSTGRES_DB: mono-production
+    volumes:
+      - type: volume
+        source: database
+        target: /var/lib/postgresql/data
+    ports:
+      - target: 5432
+        published: 5432
+
+  cache:
+    image: redis:alpine
+    container_name: mono_cache
+    ports:
+      - target: 6379
+        published: 6379
+    command: ["--requirepass", "password"]
+
+volumes:
+  database:

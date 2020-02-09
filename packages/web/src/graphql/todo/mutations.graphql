@@ -1,0 +1,32 @@
+mutation deleteTodo($input: DeleteTodoInput!) {
+  deleteTodo(input: $input) {
+    userErrors {
+      message
+    }
+    deletedTodoId
+  }
+}
+
+mutation completeTodo($input: CompleteTodoInput!) {
+  completeTodo(input: $input) {
+    userErrors {
+      message
+    }
+    todo {
+      id
+    }
+  }
+}
+
+mutation createTodo($input: CreateTodoInput!) {
+  createTodo(input: $input) {
+    userErrors {
+      message
+    }
+    todo {
+      id
+      content
+      isCompleted
+    }
+  }
+}

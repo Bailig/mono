@@ -5,6 +5,7 @@ module.exports = {
     "jest",
     "promise",
     "unicorn",
+    "cypress",
   ],
   extends: [
     "airbnb-typescript",
@@ -16,12 +17,20 @@ module.exports = {
     "prettier",
     "prettier/react",
     "prettier/@typescript-eslint",
+    "plugin:cypress/recommended",
   ],
   env: {
     node: true,
     browser: true,
     jest: true,
+    "cypress/globals": true,
   },
+  ignorePatterns: [
+    "**/node_modules",
+    "**/generated",
+    "**/build",
+    "cypress/integration/examples/*",
+  ],
   rules: {
     // Too restrictive, writing ugly code to defend against a very unlikely scenario: https://eslint.org/docs/rules/no-prototype-builtins
     "no-prototype-builtins": "off",
@@ -55,4 +64,39 @@ module.exports = {
     // Conflicts with ramda placeholder,
     "no-underscore-dangle": "off",
   },
+  overrides: [
+    {
+      files: ["packages/server/**/*.ts"],
+      rules: {
+        // typeoem entities and migration classes often don't use this
+        "class-methods-use-this": "off",
+      },
+    },
+    {
+      files: ["cypress/**/*.js"],
+      rules: {
+        "jest/expect-expect": "off",
+        "jest/valid-expect": "off",
+        "jest/valid-expect-in-promise": "off",
+        "@typescript-eslint/no-unused-expressions": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/triple-slash-reference": "off",
+        "import/no-extraneous-dependencies": "off",
+        "spaced-comment": "off",
+      },
+    },
+    {
+      files: ["packages/**/*.stories.tsx"],
+      rules: {
+        "import/no-default-export": "off",
+      },
+    },
+    {
+      files: ["packages/*/index.js"],
+      rules: {
+        "@typescript-eslint/no-var-requires": "off",
+        "import/no-unresolved": "off",
+      },
+    },
+  ],
 };

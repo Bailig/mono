@@ -12,7 +12,6 @@ import TerserPlugin from "terser-webpack-plugin";
 import webpack, { RuleSetQuery, RuleSetUse } from "webpack";
 import ManifestPlugin, { FileDescriptor } from "webpack-manifest-plugin";
 import WorkboxWebpackPlugin from "workbox-webpack-plugin";
-import { rawEnv } from "./env";
 import { moduleFileExtensions, paths } from "./paths";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -26,8 +25,10 @@ const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin");
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
-// eslint-disable-next-line import/no-dynamic-require
+/* eslint-disable import/no-dynamic-require, @typescript-eslint/no-var-requires */
 const packageName = require(paths.package.packageJson).name;
+const { rawEnv } = require(paths.package.env);
+/* eslint-enable import/no-dynamic-require, @typescript-eslint/no-var-requires */
 
 const cssModuleRegex = /\.module\.css$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
@@ -190,7 +191,8 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
                 cache: true,
                 formatter: require.resolve("react-dev-utils/eslintFormatter"),
                 eslintPath: require.resolve("eslint"),
-                resolvePluginsRelativeTo: __dirname,
+                resolvePluginsRelativeTo: paths.root.path,
+                ignore: true,
               },
               loader: require.resolve("eslint-loader"),
             },
@@ -391,7 +393,7 @@ export const getWebpackConfig: GetWebpackConfig = webpackEnv => {
         async: isEnvDevelopment,
         useTypescriptIncrementalApi: true,
         checkSyntacticErrors: true,
-        tsconfig: paths.root.tsConfig,
+        tsconfig: paths.package.tsConfig,
         reportFiles: ["**", "!**/__tests__/**", "!**/?(*.)(spec|test).*"],
         silent: false,
         formatter: isEnvProduction ? typescriptFormatter : undefined,

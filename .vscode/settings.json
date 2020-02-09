@@ -1,16 +1,18 @@
 {
   "eslint.options": {
-    "configFile": "config/.eslintrc.js",
+    "configFile": ".eslintrc.js",
     "ignorePath": ".gitignore"
   },
   "eslint.packageManager": "yarn",
   "editor.codeActionsOnSave": {
-    "source.organizeImports": false
+    "source.organizeImports": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "prettier.configPath": "config/.prettierrc.js",
   "prettier.ignorePath": ".gitignore",
   "prettier.packageManager": "yarn",
-  "liveServer.settings.port": 5501
+  "typescript.tsdk": "node_mocules/typescript/lib",
+  "jest.pathToConfig": "config/jest.config.js",
+  "jest.autoEnable": false
 }

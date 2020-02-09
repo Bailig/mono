@@ -1,7 +1,19 @@
+import { ApolloProvider } from "@apollo/react-hooks";
+import ApolloClient from "apollo-boost";
 import React, { FC } from "react";
+import { getEnvConfig } from "./config/env";
+import { Routes } from "./routes";
 
-export const App: FC = () => (
-  <button onClick={() => console.log("aaaa")} type="button">
-    click
-  </button>
-);
+const { apiUrl } = getEnvConfig();
+
+const client = new ApolloClient({
+  uri: apiUrl,
+});
+
+export const App: FC = () => {
+  return (
+    <ApolloProvider client={client}>
+      <Routes />
+    </ApolloProvider>
+  );
+};

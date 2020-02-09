@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`todo should be completed 1`] = `
+Object {
+  "data": Object {
+    "completeTodo": Object {
+      "todo": Object {
+        "content": "test todo updated",
+        "id": Any<String>,
+        "isCompleted": true,
+      },
+      "userErrors": Array [],
+    },
+  },
+}
+`;
+
+exports[`todo should be created 1`] = `
+Object {
+  "data": Object {
+    "createTodo": Object {
+      "todo": Object {
+        "content": "test todo",
+        "id": Any<String>,
+        "isCompleted": false,
+      },
+      "userErrors": Array [],
+    },
+  },
+}
+`;
+
+exports[`todo should be deleted 1`] = `
+Object {
+  "data": Object {
+    "deleteTodo": Object {
+      "deletedTodoId": Any<String>,
+      "userErrors": Array [],
+    },
+  },
+}
+`;
+
+exports[`todo should be queried as an array 1`] = `
+Object {
+  "data": Object {
+    "todos": Array [
+      Object {
+        "content": "test todo",
+        "id": Any<String>,
+        "isCompleted": false,
+      },
+    ],
+  },
+}
+`;
+
+exports[`todo should be updated with new content 1`] = `
+Object {
+  "data": Object {
+    "updateTodoContent": Object {
+      "todo": Object {
+        "content": "test todo updated",
+        "id": Any<String>,
+        "isCompleted": false,
+      },
+      "userErrors": Array [],
+    },
+  },
+}
+`;
+
+exports[`todo shouldn't be created with empty content 1`] = `
+Object {
+  "data": Object {
+    "createTodo": Object {
+      "todo": null,
+      "userErrors": Array [
+        Object {
+          "message": "content must be at least 1 characters",
+          "path": "content",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`todo shouldn't be updated with empty content 1`] = `
+Object {
+  "data": Object {
+    "updateTodoContent": Object {
+      "todo": null,
+      "userErrors": Array [
+        Object {
+          "message": "content must be at least 1 characters",
+          "path": "content",
+        },
+      ],
+    },
+  },
+}
+`;

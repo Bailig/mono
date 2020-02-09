@@ -1,13 +1,24 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.0.0",
   "npmClient": "yarn",
+  "npmClientArgs": ["--production=false"],
   "useWorkspaces": true,
   "command": {
     "publish": {
-      "ignoreChanges": ["*.md"]
+      "ignoreChanges": [
+        "*.md",
+        ".storybook",
+        ".vscode",
+        "cypress",
+        "e2e",
+        "*.spec.*",
+        "scripts",
+        "**/data",
+        "*tmp*",
+        "*temp*",
+        "*temporary*"
+      ]
     }
   }
 }

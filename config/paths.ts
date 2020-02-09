@@ -27,7 +27,6 @@ const addFileExtension = (filePath: string): string => {
 export const paths = {
   root: {
     path: resolveRoot("."),
-    env: resolveRoot("config/.env"),
     tsConfig: resolveRoot("config/tsconfig.json"),
     nodeModules: resolveRoot("node_modules"),
   },
@@ -39,6 +38,8 @@ export const paths = {
     indexJs: addFileExtension(resolvePackage("src/index")),
     packageJson: resolvePackage("package.json"),
     src: resolvePackage("src"),
+    tsConfig: resolvePackage("tsconfig.json"),
+    env: resolvePackage("src/config/env"),
   },
 };
 

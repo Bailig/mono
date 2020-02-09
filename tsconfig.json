@@ -1,0 +1,9 @@
+{
+  "extends": "./config/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "strictPropertyInitialization": false
+  },
+  "include": ["./config", "./scripts", "./packages"],
+  "exclude": ["**/node_modules", "**/build", "./cypress"]
+}

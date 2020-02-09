@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import R from "ramda";
-import fs from "fs-extra";
-import webpack from "webpack";
-import formatWebpackMessages from "react-dev-utils/formatWebpackMessages";
 
 // required to set NODE_ENV before importing config files
 process.env.NODE_ENV = "production";
 
 /* eslint-disable import/first */
+import fs from "fs-extra";
+import R from "ramda";
+import formatWebpackMessages from "react-dev-utils/formatWebpackMessages";
+import webpack from "webpack";
 import { paths } from "../config/paths";
 import { getWebpackConfig } from "../config/webpack.config";
 /* eslint-enable import/first */
