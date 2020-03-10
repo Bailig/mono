@@ -8,8 +8,8 @@
     "build": "tsc",
     "start:build": "node build/index",
     "start": "NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
+    "test": "ts-node scripts/start-test",
     "start:test": "NODE_ENV=test ts-node --files src/index.ts",
-    "test": "NODE_ENV=test jest -c ../../config/jest.config.js",
     "typeorm": "ts-node ../../node_modules/typeorm/cli.js"
   },
   "devDependencies": {

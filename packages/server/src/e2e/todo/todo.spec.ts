@@ -1,4 +1,9 @@
-import { CallServer, startTestServer, toPromise } from "../utils";
+import {
+  CallGraphql,
+  clearDatabase,
+  createCallGraphql,
+  toPromise,
+} from "../utils";
 import {
   CompleteTodoDocument,
   CreateTodoDocument,
@@ -8,22 +13,19 @@ import {
 import { GetTodosDocument } from "./queries";
 
 describe("todo", () => {
-  let stop: () => void;
-  let callServer: CallServer;
+  let callGraphql: CallGraphql;
   const todo = { content: "test todo" };
   let id: string;
 
   beforeAll(async () => {
-    const testServer = await startTestServer();
-    stop = testServer.stop;
-    callServer = testServer.callServer;
+    callGraphql = await createCallGraphql();
   });
 
-  afterAll(() => stop && stop());
+  afterAll(clearDatabase);
 
   it("should be created", async () => {
     const res = await toPromise(
-      callServer({
+      callGraphql({
         query: CreateTodoDocument,
         variables: { input: todo },
       }),
@@ -41,7 +43,7 @@ describe("todo", () => {
 
   it("shouldn't be created with empty content", async () => {
     const res = await toPromise(
-      callServer({
+      callGraphql({
         query: CreateTodoDocument,
         variables: { input: { content: "  " } },
       }),
@@ -51,7 +53,7 @@ describe("todo", () => {
   });
 
   it("should be queried as an array", async () => {
-    const res = await toPromise(callServer({ query: GetTodosDocument }));
+    const res = await toPromise(callGraphql({ query: GetTodosDocument }));
 
     expect(res).toMatchSnapshot({
       data: {
@@ -62,7 +64,7 @@ describe("todo", () => {
 
   it("should be updated with new content", async () => {
     const res = await toPromise(
-      callServer({
+      callGraphql({
         query: UpdateTodoContentDocument,
         variables: { input: { id, content: "test todo updated" } },
       }),
@@ -79,7 +81,7 @@ describe("todo", () => {
 
   it("shouldn't be updated with empty content", async () => {
     const res = await toPromise(
-      callServer({
+      callGraphql({
         query: UpdateTodoContentDocument,
         variables: { input: { id, content: " " } },
       }),
@@ -90,7 +92,7 @@ describe("todo", () => {
 
   it("should be completed", async () => {
     const res = await toPromise(
-      callServer({
+      callGraphql({
         query: CompleteTodoDocument,
         variables: { input: { id } },
       }),
@@ -107,7 +109,7 @@ describe("todo", () => {
 
   it("should be deleted", async () => {
     const res = await toPromise(
-      callServer({
+      callGraphql({
         query: DeleteTodoDocument,
         variables: { input: { id } },
       }),

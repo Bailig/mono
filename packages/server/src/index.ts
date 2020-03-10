@@ -7,6 +7,6 @@ const { port } = getEnvConfig();
 (async () => {
   const app = await getApp();
   app.listen(port, () => {
-    console.log(`server started at http://localhost:${port}/graphql`);
+    console.log(`🚀 server started at http://localhost:${port}/graphql`);
   });
 })();

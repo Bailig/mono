@@ -1,7 +1,4 @@
-// required to set NODE_ENV before importing config files
-process.env.NODE_ENV = "test";
-
-/* eslint-disable import/first, import/no-extraneous-dependencies */
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   execute,
   FetchResult,
@@ -11,40 +8,44 @@ import {
 } from "apollo-link";
 import { HttpLink } from "apollo-link-http";
 import fetch from "node-fetch";
-import { getApp } from "../app";
+import sqlite3 from "sqlite3";
 import { getEnvConfig } from "../config/env";
-/* eslint-enable import/first, import/no-extraneous-dependencies */
 
-const { port, host, protocol } = getEnvConfig();
+const { port, host, protocol, database } = getEnvConfig();
 
 export const toPromise = apolloLinkToPromise;
 
-export const startTestServer: StartTestServer = async () => {
-  const app = await getApp();
-  // TODO: remove following. the test server should start from command line
-  const httpServer = app.listen({ port });
+export const createCallGraphql: CreateCallGraphql = async () => {
   const url = `${protocol}://${host}:${port}/graphql`;
-
-  console.log(`test server started at ${url}`); // eslint-disable-line no-console
 
   const link = new HttpLink({
     uri: url,
     fetch: fetch as any, // eslint-disable-line @typescript-eslint/no-explicit-any
   });
 
-  const callGraphql: CallServer = ({ query, variables }) =>
+  const callGraphql: CallGraphql = ({ query, variables }) =>
     execute(link, { query, variables });
 
-  return {
-    stop: () => httpServer.close(),
-    callServer: callGraphql,
-  };
+  return callGraphql;
+};
+
+export const clearDatabase = (): void => {
+  if (database.type === "postgres")
+    throw new Error("Attempted to clear Postgres, only SQLite is supported.");
+
+  const { Database } = sqlite3.verbose();
+  const db = new Database(database.path);
+  db.each(
+    'SELECT name FROM sqlite_master WHERE type = "table"',
+    (error, table) => {
+      if (error) throw error;
+      db.run(`DELETE FROM ${table.name}`);
+    },
+    () => db.close(),
+  );
 };
 
 // types
 type Operation = Pick<GraphQLRequest, "query" | "variables">;
-export type CallServer = (operation: Operation) => Observable<FetchResult>;
-type StartTestServer = () => Promise<{
-  stop: () => void;
-  callServer: CallServer;
-}>;
+export type CallGraphql = (operation: Operation) => Observable<FetchResult>;
+type CreateCallGraphql = () => Promise<CallGraphql>;
