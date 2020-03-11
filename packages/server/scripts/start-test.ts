@@ -10,7 +10,7 @@ child.on("exit", code => exit(code || 0));
 child.stdout?.on("data", (data: string) => {
   // start test after server is started
   if (!data.includes("server started")) return;
-  const testResult = exec("yarn jest");
+  const testResult = exec("yarn jest -c ../../config/jest.config.js");
 
   // kill the test server, free up the port
   child.kill();
