@@ -79,7 +79,7 @@
     "postcss-preset-env": "^6.7.0",
     "postcss-safe-parser": "^4.0.1",
     "ramda": "^0.26.1",
-    "react-dev-utils": "^10.0.0",
+    "react-dev-utils": "^11.0.4",
     "resolve": "^1.14.2",
     "terser-webpack-plugin": "^2.3.2",
     "ts-node": "^8.6.2",
